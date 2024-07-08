@@ -1,0 +1,34 @@
+# Django
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+db.sqlite3
+media
+staticfiles
+*.local
+*.sqlite3
+
+# Environments
+.env
+*.env
+*.env
+.venv
+venv/
+ENV/
+env/
+
+# Archivos de base de datos
+db.sqlite3
+
+# VSCode
+.vscode/
+
+# Archivos de migraciones
+*/migrations/*.py
+*/migrations/*.pyc
+
+# Carpeta de caché
+*.cache
