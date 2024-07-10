@@ -34,6 +34,9 @@ my_project_blog/ <br>
 │   ├── wsgi.py <br>
 ├── manage.py <br>
 
+## Architectural pattern
+![PatronArquitectura](https://github.com/MateoRamirezRubio1/mini-blog-rest-api/assets/100296963/c7df2c24-06a5-404c-8349-c635a82bfc93)
+
 ## Getting Started
 To get started with this project, follow these steps:
 
