@@ -1,7 +1,8 @@
 from django.views.generic import ListView, DetailView
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.exceptions import ValidationError
 from ..models import Comment
 from ..services.comment_service import CommentService
-
 
 class CommentListView(ListView):
     model = Comment
@@ -9,20 +10,32 @@ class CommentListView(ListView):
     context_object_name = "comments"
 
     def get_queryset(self):
-        # Extract 'post_id' from URL parameters to fetch comments associated with a specific post.
+        """
+        Extract 'post_id' from URL parameters to fetch comments associated with a specific post.
+
+        :return: QuerySet of Comment objects.
+        :raises: ValidationError if 'post_id' is not provided.
+        """
         post_id = self.kwargs.get("post_id")
-        # Use the CommentService to retrieve comments for the specified post.
-        # The service layer handles data access logic, keeping the view simple.
-        return CommentService.get_comments_by_post_id(post_id)
+        if not post_id:
+            raise ValidationError("Post ID is required to fetch comments.")
+        try:
+            return CommentService.get_comments_by_post_id(post_id)
+        except Exception as e:
+            # Log the exception (if logging is configured)
+            # logger.error(f"Error when retrieving comments for post_id {post_id}: {e}")
+            raise e
 
     def get_context_data(self, **kwargs):
-        # Get the default context from the parent class and add additional context for 'post_id'.
+        """
+        Get the default context from the parent class and add additional context for 'post_id'.
+
+        :param kwargs: Additional context parameters.
+        :return: Context dictionary.
+        """
         context = super().get_context_data(**kwargs)
-        # Include 'post_id' in the context so it can be used in the template.
-        # This is necessary for rendering links or forms related to the post.
         context["post_id"] = self.kwargs.get("post_id")
         return context
-
 
 class CommentDetailView(DetailView):
     model = Comment
@@ -30,10 +43,27 @@ class CommentDetailView(DetailView):
     context_object_name = "comment"
 
     def get_object(self, queryset=None):
-        # Extract 'post_id' and 'comment_id' from URL parameters to retrieve a specific comment for a post.
+        """
+        Extract 'post_id' and 'comment_id' from URL parameters to retrieve a specific comment for a post.
+
+        :return: Comment object.
+        :raises: ValidationError if 'post_id' or 'comment_id' is not provided.
+        :raises: ObjectDoesNotExist if the comment does not exist.
+        """
         post_id = self.kwargs.get("post_id")
         comment_id = self.kwargs.get("comment_id")
-        # Use the CommentService to retrieve the specific comment based on 'post_id' and 'comment_id'.
-        # If the comment is not found, `CommentService.get_comment_by_post_and_id` will return None.
-        # In this case, a 404 error will be raised automatically by the `DetailView` if the object is not found.
-        return CommentService.get_comment_by_post_and_id(post_id, comment_id)
+        if not post_id or not comment_id:
+            raise ValidationError("Post ID and Comment ID are required to fetch the comment.")
+        try:
+            comment = CommentService.get_comment_by_post_and_id(post_id, comment_id)
+            if comment is None:
+                raise ObjectDoesNotExist(f"Comment with post_id {post_id} and comment_id {comment_id} not found.")
+            return comment
+        except ObjectDoesNotExist as e:
+            # Log the exception (if logging is configured)
+            # logger.warning(f"Comment not found: {e}")
+            raise e
+        except Exception as e:
+            # Log the exception (if logging is configured)
+            # logger.error(f"Error when retrieving comment {comment_id} for post_id {post_id}: {e}")
+            raise e
