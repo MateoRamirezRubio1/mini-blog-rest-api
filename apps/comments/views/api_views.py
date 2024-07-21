@@ -32,7 +32,7 @@ class CommentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
         # Raise a 404 error if the comment is not found.
         comment = CommentService.get_comment_by_post_and_id(post_id, comment_id)
         if comment is None:
-            raise NotFound("Comment not fund")
+            raise NotFound("Comment not found")
         return comment
 
     def perform_update(self, serializer):

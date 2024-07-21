@@ -10,7 +10,10 @@ class PostRepository:
     # Fetch a specific post by its primary key (ID)
     @staticmethod
     def get_post_by_id(post_id):
-        return Post.objects.get(pk=post_id)
+        try:
+            return Post.objects.get(pk=post_id)
+        except Post.DoesNotExist:
+            return None
 
     # Create a new post with the provided data
     @staticmethod
