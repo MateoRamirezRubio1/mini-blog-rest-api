@@ -9,3 +9,4 @@ pytest
 pytest-django
 beautifulsoup4
 coverage
+pytest-mock

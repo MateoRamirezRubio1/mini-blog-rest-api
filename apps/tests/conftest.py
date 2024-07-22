@@ -1,4 +1,6 @@
 import pytest
+from rest_framework.test import APIClient
+from django.test import Client
 from apps.posts.models import Post
 from apps.comments.models import Comment
 
@@ -32,3 +34,25 @@ def comment(db, post):
         Comment: A Comment object linked to the provided Post.
     """
     return Comment.objects.create(content="This is a test comment", post=post)
+
+@pytest.fixture
+def api_client():
+    """
+    Provide an instance of APIClient for making API requests.
+
+    Returns:
+        APIClient: An instance of the APIClient class.
+    """
+    return APIClient()
+
+@pytest.fixture
+def client():
+    """
+    Provide a Django test client instance for making HTTP requests.
+
+    Returns:
+        Client: An instance of Django's test Client class.
+    """
+    return Client()
+
+

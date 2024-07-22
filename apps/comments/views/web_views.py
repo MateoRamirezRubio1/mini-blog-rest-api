@@ -22,8 +22,6 @@ class CommentListView(ListView):
         try:
             return CommentService.get_comments_by_post_id(post_id)
         except Exception as e:
-            # Log the exception (if logging is configured)
-            # logger.error(f"Error when retrieving comments for post_id {post_id}: {e}")
             raise e
 
     def get_context_data(self, **kwargs):
@@ -60,10 +58,6 @@ class CommentDetailView(DetailView):
                 raise ObjectDoesNotExist(f"Comment with post_id {post_id} and comment_id {comment_id} not found.")
             return comment
         except ObjectDoesNotExist as e:
-            # Log the exception (if logging is configured)
-            # logger.warning(f"Comment not found: {e}")
             raise e
         except Exception as e:
-            # Log the exception (if logging is configured)
-            # logger.error(f"Error when retrieving comment {comment_id} for post_id {post_id}: {e}")
             raise e

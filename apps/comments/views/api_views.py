@@ -12,16 +12,14 @@ class CommentListCreateAPIView(generics.ListCreateAPIView):
 
         :return: QuerySet of Comment objects.
         :raises: ValidationError if 'post_id' is not provided.
-        """
+        """ 
         post_id = self.kwargs.get("post_id")
         if not post_id:
-            raise ValidationError("Post ID is required to fetch comments.")
+            raise APIException("Post ID is required to fetch comments.")
         try:
             return CommentService.get_comments_by_post_id(post_id)
-        except APIException as e:
-            # Log the exception (if logging is configured)
-            # logger.error(f"API error when retrieving comments for post_id {post_id}: {e}")
-            raise e
+        except ValueError:
+            raise APIException("Invalid Post ID format.")
 
     def perform_create(self, serializer):
         """
@@ -32,13 +30,11 @@ class CommentListCreateAPIView(generics.ListCreateAPIView):
         """
         post_id = self.kwargs.get("post_id")
         if not post_id:
-            raise ValidationError("Post ID is required to create a comment.")
+            raise APIException("Post ID is required to create a comment.")
         try:
             CommentService.create_comment(serializer.validated_data, post_id)
-        except APIException as e:
-            # Log the exception (if logging is configured)
-            # logger.error(f"API error when creating comment for post_id {post_id}: {e}")
-            raise e
+        except ValueError:
+            raise APIException("Invalid Post ID format.")
 
 class CommentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CommentSerializer
@@ -54,16 +50,14 @@ class CommentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
         post_id = self.kwargs.get("post_id")
         comment_id = self.kwargs.get("comment_pk")
         if not post_id or not comment_id:
-            raise ValidationError("Post ID and Comment ID are required to fetch the comment.")
+            raise APIException("Post ID and Comment ID are required to fetch the comment.")
         try:
             comment = CommentService.get_comment_by_post_and_id(post_id, comment_id)
             if comment is None:
                 raise NotFound("Comment not found")
             return comment
-        except APIException as e:
-            # Log the exception (if logging is configured)
-            # logger.error(f"API error when retrieving comment {comment_id} for post_id {post_id}: {e}")
-            raise e
+        except ValueError:
+            raise APIException("Invalid Post or Comment ID format.")
 
     def perform_update(self, serializer):
         """
@@ -74,13 +68,11 @@ class CommentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
         """
         comment_id = self.kwargs.get("comment_pk")
         if not comment_id:
-            raise ValidationError("Comment ID is required to update the comment.")
+            raise APIException("Comment ID is required to update the comment.")
         try:
             CommentService.update_comment(serializer.validated_data, comment_id)
-        except APIException as e:
-            # Log the exception (if logging is configured)
-            # logger.error(f"API error when updating comment {comment_id}: {e}")
-            raise e
+        except ValueError:
+            raise APIException("Invalid Comment ID format.")
 
     def perform_destroy(self, instance):
         """
@@ -91,10 +83,8 @@ class CommentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
         """
         comment_id = self.kwargs.get("comment_pk")
         if not comment_id:
-            raise ValidationError("Comment ID is required to delete the comment.")
+            raise APIException("Comment ID is required to delete the comment.")
         try:
             CommentService.delete_comment(comment_id)
-        except APIException as e:
-            # Log the exception (if logging is configured)
-            # logger.error(f"API error when deleting comment {comment_id}: {e}")
-            raise e
+        except ValueError:
+            raise APIException("Invalid Comment ID format.")
