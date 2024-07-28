@@ -1,6 +1,8 @@
 This project is a Django-based mini blog application designed to illustrate the implementation of the Services and Repositories design pattern. It features a clear separation of concerns, making the codebase easier to maintain and extend.
 
 **You can follow the step by step of the making of the app on my blog: [My blog](https://mateoramirezr.hashnode.dev/django-services-and-repositories-design-pattern-with-rest-api).**
+</br>
+**You can see the application test here: [Testing App](https://mateoramirezr.hashnode.dev/preview/669dcc8df7b0290261679dad).**
 
 ## Features
 - **Posts and Comments:** Users can create, update, and delete blog posts and comments.
